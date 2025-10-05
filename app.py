@@ -3,20 +3,17 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-# --- Base examples used in class ---
 @app.get("/")
 def root():
     return " you called \n"
 
 @app.post("/echo")
 def echo():
-    # Accept form or JSON
     text = request.form.get("text")
     if text is None and request.is_json:
         text = (request.get_json(silent=True) or {}).get("text")
     return f"You said: {text}" if text is not None else "You said: "
 
-# --- Factoring utilities (trial division) ---
 def _prime_factors(n: int):
     """Return prime factors (no 1). Requires n >= 2."""
     factors = []
@@ -41,10 +38,9 @@ def _lab_spec_factors_list(n: int):
     """
     pfs = _prime_factors(n)
     if len(pfs) == 1 and pfs[0] == n:
-        return [n]              # prime
-    return [1] + pfs            # composite (include 1 as first element)
+        return [n]             
+    return [1] + pfs            
 
-# --- Factors endpoints ---
 @app.get("/factors")
 def get_factors():
     raw = request.args.get("inINT", None)
@@ -80,5 +76,4 @@ def post_factors():
     return jsonify(input=n, factors=_lab_spec_factors_list(n))
 
 if __name__ == "__main__":
-    # Codespaces-friendly run
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)))
